@@ -14,7 +14,7 @@ def task_five(dbh):
         if user_school != "" and salon_school != "":
             D.add_edge(user_school,salon_school)
 
-    pr = nx.pagerank(D,alpha=0.85)
+    pr = nx.pagerank(D, alpha=0.85)
     # 在console输出结果
     for node,pageRankValue in pr.items():
         print "%s : %.4f" % (node, pageRankValue)

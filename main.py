@@ -5,6 +5,7 @@ import datetime
 import pickle
 from task_one import task_one
 from task_six import task_six
+# 使用微软雅黑替换过matplotlib的字体文件
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -20,11 +21,11 @@ class DBHandle(object):
     app_user_school_dict = {}  # 可能有school为NULL的情况，索引是ID字符串
     schools = []  # 所有数据库统计出来的学院
     excep = ["档案馆", "保卫部", "信息办", "总务办", "出版社", "基金会", "发展规划处", "劳服办", "无", "工会",
-             "信息国家实验室", "北京清华长庚医院", "通力公司", "正大公司", "艺术博物馆", "发展规划处",
+             "信息国家实验室", "北京清华长庚医院", "通力公司", "网络研究院", "正大公司", "艺术博物馆", "发展规划处",
              "国际处", "电教中心", "训练中心", "信息技术中心", "科研院", "组织部", "附中", "网络中心",
              "附小", "文科高研所", "深圳研究生院", "资产处", "宣传部", "党办校办", "技术转移研究院", "学生处",
              "数学科学中心", "教务处", "研究生院", "信研院", "体育部", "建筑技术", "全校", "", "地球科学中心",
-             "图书馆", "校医院","计算机", "计算中心","交叉信息院"]
+             "图书馆", "校医院","计算机", "计算中心","交叉信息院"] # "网络研究院"
     effectiveschools = []
 
     # 合并的学院名称
@@ -65,13 +66,18 @@ class DBHandle(object):
         for row in self.app_user_results:
             id = str(row[0])
             school = row[1]
+            try:
+                school = school.strip()  # 去除学院二边不可见字符
+            except AttributeError:
+                pass
             self.app_user_school_dict[id] = school
             if school not in self.schools and school!=None:
-                self.schools.append(school.strip())
+                self.schools.append(school)
         self.geteffectiveschool()
 
         self.app_user_followings_results = self.execute_sql("select from_user_id,to_user_id from app_user_followings "
                                                             "where from_user_id > 10000")
+
 
     def getuserschool(self,user_id):
         try:

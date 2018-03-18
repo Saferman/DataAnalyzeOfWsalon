@@ -59,10 +59,20 @@ def sixanalyze(start,end):
 
 def task_six(dbh):
     needed_schools = dbh.effectiveschools
+    # 学院总人数
+    total_school_people = {}
+    for item in dbh.app_user_results:
+        school = item[1]
+        try:
+            total_school_people[school] += 1
+        except KeyError:
+            total_school_people[school] = 1
+
     for flag_school in needed_schools:
         tmp = Portrait(flag_school)
 
         # 得到该学院总人数
+        tmp.total_people = total_school_people[school]
 
         # 计算人均发起场数
         for item in dbh.app_salon_results:
@@ -134,7 +144,8 @@ def task_six(dbh):
             user_id = item[1]
             school = dbh.getuserschool(user_id)
             if school == flag_school:
-                salon_id_time_result = dbh.executesql("select start,end from app_salon where salon_id = " + salon_id)[0]
+                salon_id_time_result = dbh.execute_sql("select start,end from app_salon "
+                                                       "where id = " + str(salon_id))[0]
                 start_time = salon_id_time_result[0]
                 end_time = salon_id_time_result[1]
                 interval = sixanalyze(start_time, end_time)
@@ -178,12 +189,15 @@ def drawscale(school,scale_dict,scale_max,show = 1,id = 1):
     if show:
         plt.show()
     else:
-        plt.savefig(task_six_results_dir + school.decode('UTF-8').encode('GBK') + ".png")
-
-
+        plt.savefig(task_six_results_dir + school + ".png")
 
 
 if __name__ == '__main__':
+    # 解决画图出错
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
     needed_schools = []
     with open("task_six_needed_school.pickle",'r') as f:
         needed_schools = pickle.load(f)

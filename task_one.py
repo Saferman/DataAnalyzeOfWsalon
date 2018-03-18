@@ -1,17 +1,15 @@
-#encoding:utf8
+# encoding:utf8
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# 中文方格子解决办法
-from pylab import *
-mpl.rcParams['font.sans-serif'] = ['SimHei']  # 有效的方法
+## 中文方格子解决办法
+# from pylab import *
+# mpl.rcParams['font.sans-serif'] = ['SimHei']  # 有效的方法
 
 def task_one(dbh):
     used_node = []
-    D = nx.DiGraph()
+    MG = nx.MultiGraph()
     needed_schools = dbh.effectiveschools
-    for node in needed_schools:
-        D.add_node(node)
     for item in dbh.app_salonsign_results:
         salon_id = item[0]
         user_id = item[1]
@@ -19,7 +17,7 @@ def task_one(dbh):
         salon_school = dbh.getsalonschool(salon_id)
         if user_school != "" and salon_school != "":
             if user_school in needed_schools and salon_school in needed_schools:
-                D.add_edge(user_school,salon_school)
+                MG.add_edge(user_school,salon_school,weight = 1)  #权重影响吗？
                 # 将所有有边的节点放入used_node 里
                 if user_school not in used_node:
                     used_node.append(user_school)
@@ -30,9 +28,26 @@ def task_one(dbh):
                 # D.add_edge(user_school, salon_school)
                 continue
 
+    D = nx.DiGraph()
+    for u,v,d in MG.edges(data=True):
+        w = d['weight']
+        if D.has_edge(u,v):
+            D[u][v]['weight'] += w
+        else:
+            D.add_edge(u,v,weight=w)
 
+    # 将图中没有边的点全部去除
+    # RuntimeError: dictionary changed size during iteration
+    # all_nodes = []
+    # for node in D.nodes():
+        # all_nodes.append(node)
+    # for node in all_nodes: # RuntimeError: dictionary changed size during iteration!!!!
+        # if node not in used_node:
+            # D.remove_node(node)
+            # print "[Not used Node] " + str(node)
 
-    pr = nx.pagerank(D,alpha=0.5)
+    # PageRank 算法
+    pr = nx.pagerank(D, alpha=0.5)
     if dbh.debug:
         for node, pageRankValue in pr.items():
             print "%s : %.4f" % (node, pageRankValue)
@@ -46,21 +61,11 @@ def task_one(dbh):
     # 将D保存
     dbh.save("task_one_D.pickle", D)
 
-    # 将图中没有边的点全部去除
-    # RuntimeError: dictionary changed size during iteration
-    all_nodes = []
-    for node in D.nodes():
-        all_nodes.append(node)
-    for node in all_nodes: # RuntimeError: dictionary changed size during iteration!!!!
-        if node not in used_node:
-            D.remove_node(node)
-            print "[Not used Node] " + str(node)
-
     # 画图
     dbh.figure_id += 1
     plt.figure(dbh.figure_id)
     nx.draw(D, pos=nx.random_layout(D), node_color = 'b', edge_color = "r",
-            with_labels=True, font_size=18, node_size=20)
+            with_labels=True, font_size=10, node_size=30)
     if dbh.debug:
         plt.show()
     else:
@@ -68,7 +73,12 @@ def task_one(dbh):
 
 
 if __name__ == '__main__':
-    import pickle
+    # 解决画图出错
+    import chardet
+    import sys,pickle
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
     f=open("task_one.pickle",'r')
     pr_list = pickle.load(f)
     f.close()
@@ -79,6 +89,10 @@ if __name__ == '__main__':
     D = pickle.load(f)
     f.close()
 
+    # for node in D.nodes():
+        # print node,
+        # print chardet.detect(node)
+    # print "\n"
 
     plt.figure(1)
     nx.draw(D, pos=nx.random_layout(D), node_color='b', edge_color="r",
