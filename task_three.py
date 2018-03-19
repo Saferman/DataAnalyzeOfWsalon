@@ -27,10 +27,15 @@ def task_three(dbh):
 
     print len(D.nodes())
 
-    k = 40
+    k = 50
+    # 这个函数源码
+    # https://networkx.github.io/documentation/latest/reference/algorithms/generated/networkx.algorithms.community.centrality.girvan_newman.html
+    # 既然要量化我们需要在源码中定位计算的相关变量然后给出来
     comp = nx.algorithms.community.centrality.girvan_newman(D)
     for communities in itertools.islice(comp,k):
         show(tuple(sorted(c) for c in communities))
+    # 这里可以绘制一个层次聚类图  类似http://blog.sciencenet.cn/blog-563898-750516.html
+
 
 def task_three_with_third_party(dbh):
     # 读取taks_one生成的有向权图
@@ -65,5 +70,7 @@ def task_three_with_third_party(dbh):
 
 
 if __name__=='__main__':
-    # task_three('')
-   task_three_with_third_party('')
+    # 下面二种方法区别在于第一个是GN原始算法，第二个引入了Modularity Q
+    # 参考http://blog.sciencenet.cn/blog-563898-750516.html
+    task_three('')
+    # task_three_with_third_party('')

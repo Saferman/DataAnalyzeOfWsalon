@@ -38,12 +38,12 @@ def CmtyGirvanNewmanStep(G):
                 G.remove_edge(k[0],k[1])    #remove the central edge
         ncomp = nx.number_connected_components(G)    #recalculate the no of components
 
-#compute the modularity of current split
+# compute the modularity of current split
 def _GirvanNewmanGetModularity(G, deg_, m_):
     New_A = nx.adj_matrix(G)
     New_deg = {}
     New_deg = UpdateDeg(New_A, G.nodes())
-    #Let's compute the Q
+    # Let's compute the Q
     comps = nx.connected_components(G)    #list of components    
     print 'No of communities in decomposed G: %d' % nx.number_connected_components(G)
     Mod = 0    #Modularity of a given partitionning
