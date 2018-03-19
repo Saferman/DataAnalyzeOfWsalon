@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def task_one(dbh):
     used_node = []
-    MG = nx.MultiGraph()
+    MG = nx.MultiDiGraph()
     needed_schools = dbh.effectiveschools
     for item in dbh.app_salonsign_results:
         salon_id = item[0]
@@ -17,7 +17,7 @@ def task_one(dbh):
         salon_school = dbh.getsalonschool(salon_id)
         if user_school != "" and salon_school != "":
             if user_school in needed_schools and salon_school in needed_schools:
-                MG.add_edge(user_school,salon_school,weight = 1)  #权重影响吗？
+                MG.add_edge(user_school,salon_school,weight = 1)  # 权重影响吗？  # 可能user_school == salon_school
                 # 将所有有边的节点放入used_node 里
                 if user_school not in used_node:
                     used_node.append(user_school)

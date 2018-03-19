@@ -1,11 +1,11 @@
-
+# https://github.com/kjahan/community.git
 import networkx as nx
 import math
 import csv
 import random as rand
 import sys
 
-_DEBUG_ = False
+_DEBUG_ = True
 
 #this method just reads the graph structure from the file
 def buildG(G, file_, delimiter_):
@@ -79,7 +79,8 @@ def runGirvanNewman(G, Orig_deg, m_):
         print "Modularity of decomposed G: %f" % Q
         if Q > BestQ:
             BestQ = Q
-            Bestcomps = nx.connected_components(G)    #Best Split
+            # https://www.douban.com/note/562959668/
+            Bestcomps = list(nx.connected_components(G))    #Best Split
             print "Components:", Bestcomps
         if G.number_of_edges() == 0:
             break
@@ -89,8 +90,8 @@ def runGirvanNewman(G, Orig_deg, m_):
     else:
         print "Max modularity (Q): %f" % BestQ
 
-def main():
-    graph_fn = "graph.txt"
+def main(filename="graph.txt"):
+    graph_fn = filename
     G = nx.Graph()  #let's create the graph first
     buildG(G, graph_fn, ',')
     
@@ -117,4 +118,4 @@ def main():
     runGirvanNewman(G, Orig_deg, m_)
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main("graph_me.txt"))
