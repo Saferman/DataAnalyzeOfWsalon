@@ -1,3 +1,3 @@
 salon活动按照tag标签重新分类代码需要完成，并修改task_one.py代码
 聚类量化采用nx源码定位修改的方法（不可行），最后可以画出层次聚类图，聚类社群按照show_cluster_result.py给出的做
-跨学科交流满意度代码书写
+跨学科交流满意度代码书写  app_salonsign  grades salon_id user_id字段

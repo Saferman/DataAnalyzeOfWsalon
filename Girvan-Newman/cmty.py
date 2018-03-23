@@ -7,7 +7,7 @@ import sys
 
 _DEBUG_ = True
 
-#this method just reads the graph structure from the file
+# this method just reads the graph structure from the file
 def buildG(G, file_, delimiter_):
     #construct the weighted version of the contact graph from cgraph.dat file
     #reader = csv.reader(open("/home/kazem/Data/UCI/karate.txt"), delimiter=" ")
@@ -90,9 +90,12 @@ def runGirvanNewman(G, Orig_deg, m_):
     else:
         print "Max modularity (Q): %f" % BestQ
 
-def main(filename="graph.txt"):
+def cmty(filename="graph.txt",directed = 0):
     graph_fn = filename
-    G = nx.Graph()  #let's create the graph first
+    if directed:
+        G=nx.DiGraph()
+    else:
+        G = nx.Graph()  # let's create the graph first
     buildG(G, graph_fn, ',')
     
     if _DEBUG_:
@@ -118,4 +121,4 @@ def main(filename="graph.txt"):
     runGirvanNewman(G, Orig_deg, m_)
 
 if __name__ == "__main__":
-    sys.exit(main("graph_me.txt"))
+    sys.exit(cmty("graph_me.txt",directed = 0))

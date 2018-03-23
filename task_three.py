@@ -19,9 +19,9 @@ def show(tuple_list = ([])):
         print "],"
     print "\n"
 
-def task_three(dbh):
+def task_three(dbh, Graph_pickle):
     # 读取taks_one生成的有向权图
-    f = open("task_one_D.pickle", 'r')
+    f = open(Graph_pickle, 'r')
     D = pickle.load(f)
     f.close()
 
@@ -37,9 +37,9 @@ def task_three(dbh):
     # 这里可以绘制一个层次聚类图  类似http://blog.sciencenet.cn/blog-563898-750516.html
 
 
-def task_three_with_third_party(dbh):
+def task_three_with_third_party(dbh,Graph_pickle=''):
     # 读取taks_one生成的有向权图
-    f = open("task_one_D.pickle", 'r')
+    f = open(Graph_pickle, 'r')
     D = pickle.load(f)
     f.close()
 
@@ -68,9 +68,8 @@ def task_three_with_third_party(dbh):
 
 
 
-
 if __name__=='__main__':
     # 下面二种方法区别在于第一个是GN原始算法，第二个引入了Modularity Q
     # 参考http://blog.sciencenet.cn/blog-563898-750516.html
-    task_three('')
-    # task_three_with_third_party('')
+    task_three('',Graph_pickle = "task_one_D.pickle")
+    # task_three_with_third_party('',Graph_pickle = "task_one_D.pickle")

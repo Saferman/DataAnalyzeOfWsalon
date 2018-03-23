@@ -59,14 +59,19 @@ def sixanalyze(start,end):
 
 def task_six(dbh):
     needed_schools = dbh.effectiveschools
-    # 学院总人数
+    # 统计有用学院的学院总人数（以沙龙注册情况判断）
     total_school_people = {}
     for item in dbh.app_user_results:
         school = item[1]
+        if school not in needed_schools:
+            continue
         try:
             total_school_people[school] += 1
         except KeyError:
             total_school_people[school] = 1
+
+    dbh.save("total_school_people.pickle", total_school_people)
+    # raw_input("raw_input END")
 
     for flag_school in needed_schools:
         tmp = Portrait(flag_school)
@@ -159,6 +164,7 @@ def task_six(dbh):
     # for循环结束，保存任务六涉及的学院
     dbh.save("task_six_needed_school.pickle", needed_schools)
 
+
 def sixshowlist(L):
     for item in L:
         try:
@@ -198,6 +204,18 @@ if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
+    # 打印学院总人数：
+    f = open("total_school_people.pickle")
+    tsp = pickle.load(f)
+    f.close()
+    for v, k in tsp.items():
+        print '{v}:{k}, '.format(v=v,k=k),
+    print "\n",
+    # 排个序
+    for item in sorted(tsp.items(),key = lambda x:x[1],reverse = True):
+        print '{v}:{k}, '.format(v=item[0], k=item[1]),
+    print "\n"
+    raw_input("raw_input end")
     needed_schools = []
     with open("task_six_needed_school.pickle",'r') as f:
         needed_schools = pickle.load(f)
