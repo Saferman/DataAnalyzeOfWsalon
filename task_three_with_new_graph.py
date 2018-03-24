@@ -38,31 +38,31 @@ def task_three_with_new_graph(dbh):
         else:
             D.add_edge(u, v, weight=w)
 
-    # 不归一化
-    dbh.save(task_three_results_dir + "non-normalization.pickle",D)
+    # # 不归一化
+    # dbh.save(task_three_results_dir + "non-normalization.pickle",D)
+    #
+    # # 人数归一化
+    # all_nodes = D.nodes()
+    # # 统计有用学院的学院总人数（以沙龙注册情况判断）
+    # total_school_people = {}
+    # for item in dbh.app_user_results:
+    #     school = item[1]
+    #     school = dbh.check_merge(school)
+    #     if school not in all_nodes:
+    #         continue
+    #     school = school.strip()
+    #     try:
+    #         total_school_people[school] += 1
+    #     except KeyError:
+    #         total_school_people[school] = 1
+    # for u,v,d in D.edges(data=True):
+    #     w = float(d['weight'])
+    #     p1 = float(total_school_people[u])
+    #     p2 = float(total_school_people[v])
+    #     D[u][v]['weight'] = w/p1 + w/p2
+    # dbh.save(task_three_results_dir + "people-normalization.pickle", D)
 
-    # 人数归一化
-    all_nodes = D.nodes()
-    # 统计有用学院的学院总人数（以沙龙注册情况判断）
-    total_school_people = {}
-    for item in dbh.app_user_results:
-        school = item[1]
-        school = dbh.check_merge(school)
-        if school not in all_nodes:
-            continue
-        school = school.strip()
-        try:
-            total_school_people[school] += 1
-        except KeyError:
-            total_school_people[school] = 1
-    for u,v,d in D.edges(data=True):
-        w = float(d['weight'])
-        p1 = float(total_school_people[u])
-        p2 = float(total_school_people[v])
-        D[u][v]['weight'] = w/p1 + w/p2
-    dbh.save(task_three_results_dir + "people-normalization.pickle", D)
-
-    """
+    # """
     # 次数归一化
     all_nodes = D.nodes()
     frequency = {}  # school:[发起次数, 被参与次数]
@@ -82,13 +82,18 @@ def task_three_with_new_graph(dbh):
             frequency[school] = [attend,attended]
     for u,v,d in D.edges(data = True):
         w = float(d['weight'])
-        attend = float(frequency[school][0])
-        D[u][v]['weight'] = w/attend
+        u_count = float(frequency[u][0]) + float(frequency[u][1])
+        v_count = float(frequency[v][0]) + float(frequency[v][1])
+        try:
+            D[u][v]['weight'] = w / u_count + w / v_count
+        except ZeroDivisionError:
+            D[u][v]['weight'] = w / (u_count + 1) + w / (v_count+1)
     dbh.save(task_three_results_dir + "count-normalization.pickle", D)
-    pass"""
+    pass
+    # """
 
     print "[+]task_three_with_new_graph end!"
 
 
 if __name__ == '__main__':
-    pass
+    print "Do nothing"

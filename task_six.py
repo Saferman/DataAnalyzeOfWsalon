@@ -56,13 +56,33 @@ def sixanalyze(start,end):
     if int(hour) <= 24:
         return 2
 
+def task_six_bak(dbh):
+    flag_school = "建筑学院"
+    launch = 0
+    # 计算人均发起场数
+    for item in dbh.app_salon_results:
+        creator_id = item[2]
+        school = dbh.getuserschool(creator_id)
+        if school == flag_school:
+            launch += 1
+
+    attend = 0
+    # 计算人均参与场数
+    for item in dbh.app_salonsign_results:
+        user_id = item[1]
+        school = dbh.getuserschool(user_id)
+        if school == flag_school:
+            attend += 1
+    print "参与场数",attend
+    print "发起场数",launch
+
 
 def task_six(dbh):
     needed_schools = dbh.effectiveschools
     # 统计有用学院的学院总人数（以沙龙注册情况判断）
     total_school_people = {}
     for item in dbh.app_user_results:
-        school = item[1]
+        school = dbh.check_merge(item[1])
         if school not in needed_schools:
             continue
         try:
@@ -71,7 +91,7 @@ def task_six(dbh):
             total_school_people[school] = 1
 
     dbh.save("total_school_people.pickle", total_school_people)
-    # raw_input("raw_input END")
+    raw_input("raw_input END")
 
     for flag_school in needed_schools:
         tmp = Portrait(flag_school)
@@ -85,7 +105,7 @@ def task_six(dbh):
             school = dbh.getuserschool(creator_id)
             if school == flag_school:
                 tmp.avg_launch += 1
-        tmp.avg_launch = tmp.avg_launch / tmp.total_people
+        tmp.avg_launch = tmp.avg_launch #/ tmp.total_people
 
         # 计算人均参与场数
         for item in dbh.app_salonsign_results:
@@ -93,7 +113,7 @@ def task_six(dbh):
             school = dbh.getuserschool(user_id)
             if school == flag_school:
                 tmp.avg_attend += 1
-        tmp.avg_attend = tmp.avg_attend / tmp.total_people
+        tmp.avg_attend = tmp.avg_attend #/ tmp.total_people
 
         # 参与交流的规模
         for item in dbh.app_salonsign_results:
@@ -208,9 +228,6 @@ if __name__ == '__main__':
     f = open("total_school_people.pickle")
     tsp = pickle.load(f)
     f.close()
-    for v, k in tsp.items():
-        print '{v}:{k}, '.format(v=v,k=k),
-    print "\n",
     # 排个序
     for item in sorted(tsp.items(),key = lambda x:x[1],reverse = True):
         print '{v}:{k}, '.format(v=item[0], k=item[1]),
